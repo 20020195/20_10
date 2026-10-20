@@ -1129,77 +1129,32 @@
     body.classList.remove('show-hint');
   }
 
-  /* ---------------- Photos in the card ---------------- */
+  /* ---------------- Photos pinned on the card ---------------- */
 
-  const Photos = (() => {
-    const stack = document.getElementById('photoStack');
-    const dotsBox = document.getElementById('photoDots');
-    const cards = stack ? [...stack.querySelectorAll('.polaroid')] : [];
-    if (cards.length < 2) return { start() {}, stop() {} };
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  let lastPin = null;
 
-    const order = cards.map((_, i) => i); // order[0] is the photo on top
-    let busy = false, timer = 0;
-    const dots = cards.map((_, i) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.setAttribute('aria-label', `Ảnh ${i + 1}`);
-      b.addEventListener('click', () => { goTo(i, 1); restart(); });
-      dotsBox.appendChild(b);
-      return b;
-    });
+  function openPhoto(pin) {
+    const img = pin.querySelector('img');
+    lightboxImg.src = img.currentSrc || img.src;
+    lightboxImg.alt = img.alt;
+    lastPin = pin;
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lightbox.focus({ preventScroll: true });
+  }
 
-    function layout() {
-      order.forEach((ci, pos) => { cards[ci].className = `polaroid p${Math.min(pos, 2)}`; });
-      dots.forEach((d, i) => d.setAttribute('aria-current', String(i === order[0])));
-    }
+  function closePhoto() {
+    if (!lightbox.classList.contains('open')) return false;
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    if (lastPin) lastPin.focus({ preventScroll: true });
+    return true;
+  }
 
-    // the top photo flies off (right, or left when swiped left) and slides back in at the bottom of the pile
-    function goTo(i, dir) {
-      if (busy || i === order[0]) return;
-      busy = true;
-      cards[order[0]].classList.add(dir < 0 ? 'out-l' : 'out');
-      setTimeout(() => {
-        while (order[0] !== i) order.push(order.shift());
-        layout();
-        busy = false;
-      }, 380);
-    }
-    const next = dir => goTo(order[1], dir);
-
-    // the photo at the bottom of the pile comes back in from the left
-    function prev() {
-      if (busy) return;
-      const ci = order.pop();
-      order.unshift(ci);
-      cards[ci].className = 'polaroid from-l';
-      void cards[ci].offsetWidth;
-      layout();
-    }
-
-    function restart() {
-      clearInterval(timer);
-      if (state.cardOpen) timer = setInterval(() => next(1), 4200);
-    }
-
-    let sx = 0, sy = 0, down = false;
-    stack.addEventListener('pointerdown', e => { down = true; sx = e.clientX; sy = e.clientY; });
-    stack.addEventListener('pointercancel', () => { down = false; });
-    stack.addEventListener('pointerup', e => {
-      if (!down) return;
-      down = false;
-      const dx = e.clientX - sx, dy = e.clientY - sy;
-      if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) dx < 0 ? next(-1) : prev();
-      else if (Math.abs(dx) < 10 && Math.abs(dy) < 10) next(1);
-      restart();
-    });
-    stack.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); next(1); restart(); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); restart(); }
-    });
-
-    layout();
-    return { start: restart, stop() { clearInterval(timer); } };
-  })();
+  document.querySelectorAll('.pin').forEach(pin => pin.addEventListener('click', () => openPhoto(pin)));
+  lightbox.addEventListener('click', closePhoto);
 
   /* ---------------- Story ---------------- */
 
@@ -1232,9 +1187,8 @@
     body.classList.remove('show-actions', 'closing');
     body.classList.add('card-open');
     overlay.setAttribute('aria-hidden', 'false');
-    card.scrollTop = 0;
+    overlay.scrollTop = 0;
     card.focus({ preventScroll: true });
-    Photos.start();
   }
 
   function closeCard() {
@@ -1242,7 +1196,6 @@
     if (!state.cardSeen) showHint();
     state.cardOpen = false;
     state.cardSeen = true;
-    Photos.stop();
     dirty = true;
     body.classList.add('closing');
     body.classList.remove('card-open');
@@ -1283,7 +1236,7 @@
   reopenBtn.addEventListener('click', openCard);
   replayBtn.addEventListener('click', replay);
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeCard();
+    if (e.key === 'Escape' && !closePhoto()) closeCard();
   });
 
   let resizeTimer = 0;

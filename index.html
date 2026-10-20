@@ -63,6 +63,8 @@
   <!-- Thiệp: sửa lời chúc ngay trong khối này -->
   <div class="overlay" id="overlay" aria-hidden="true">
     <article class="card" id="card" role="dialog" aria-modal="true" aria-labelledby="cardTitle" tabindex="-1">
+      <!-- Ảnh gắn trên thiệp: đổi ảnh bằng cách thay file trong thư mục photos/ (ảnh vuông) -->
+      <button class="pin pin-tr" type="button" aria-label="Xem ảnh lớn"><img src="photos/1.jpg" alt="Em nhắm mắt mỉm cười giữa núi đồi" width="900" height="900" decoding="async"></button>
       <svg class="card-rose" viewBox="0 0 40 48" aria-hidden="true">
         <path d="M20 25c.4 8-.6 14 0 21.5" fill="none" stroke="#6f9d6c" stroke-width="1.6" stroke-linecap="round"/>
         <path d="M19.8 36.5c-4.6-3.4-8.6-3.3-11.3-.6 3.6 2.6 7.6 2.8 11.3.6z" fill="#b5d8aa" stroke="#6f9d6c" stroke-width="1.2" stroke-linejoin="round"/>
@@ -73,20 +75,13 @@
       </svg>
 
       <p class="card-greet">Gửi Bé Kem iu dấu,</p>
+      <button class="pin pin-l" type="button" aria-label="Xem ảnh lớn"><img src="photos/2.jpg" alt="Em ôm bó hoa trắng trên đỉnh núi" width="900" height="900" decoding="async"></button>
       <h1 class="card-title" id="cardTitle">Mong những<br>điều đẹp đẽ<br>luôn nở bên em.</h1>
 
-      <!-- Ảnh: thêm/bớt ảnh bằng cách thêm/bớt một khối .polaroid (ảnh vuông trong thư mục photos/) -->
-      <div class="photos">
-        <div class="photo-stack" id="photoStack" role="button" tabindex="0" aria-label="Ảnh của em, chạm để xem ảnh tiếp theo">
-          <div class="polaroid"><img src="photos/1.jpg" alt="Em nhắm mắt mỉm cười giữa núi đồi" width="900" height="900" decoding="async"></div>
-          <div class="polaroid"><img src="photos/2.jpg" alt="Em ôm bó hoa trắng trên đỉnh núi" width="900" height="900" decoding="async"></div>
-          <div class="polaroid"><img src="photos/3.jpg" alt="Em giữa vườn hoa cánh bướm" width="900" height="900" decoding="async"></div>
-        </div>
-        <div class="photo-dots" id="photoDots"></div>
-      </div>
 
       <div class="card-body">
         <p>Có những ngày rất đỗi bình thường <br>bỗng hóa đặc biệt, chỉ vì có em ở đó.</p>
+        <button class="pin pin-r" type="button" aria-label="Xem ảnh lớn"><img src="photos/3.jpg" alt="Em giữa vườn hoa cánh bướm" width="900" height="900" decoding="async"></button>
         <p>Nhân ngày 20/10, chúc em luôn khỏe mạnh, vui tươi và được trân trọng theo đúng cách em xứng đáng. Mong mỗi sáng thức dậy em đều có một lý do để mỉm cười, và đủ dịu dàng với chính mình sau những ngày mệt mỏi.</p>
         <p>Hôm nay, ngày mai và mọi ngày sau nữa, <br>cứ tỏa sáng theo cách của riêng em nhé.</p>
       </div>
@@ -95,6 +90,10 @@
       <p class="card-signature">A Hi <span class="heart">❤️</span></p>
       <button class="link-btn" id="closeBtn" type="button">Ngắm vườn hoa</button>
     </article>
+  </div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Ảnh" aria-hidden="true" tabindex="-1">
+    <figure class="lightbox-frame"><img id="lightboxImg" alt=""></figure>
   </div>
 
   <script src="script.js"></script>

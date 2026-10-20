@@ -257,14 +257,19 @@ body {
   position: fixed;
   inset: 0;
   display: grid;
-  place-items: center;
-  padding: max(4vh, 16px) 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 46px 16px 40px;
   background: rgba(255, 255, 255, .06);
   opacity: 0;
   visibility: hidden;
   transition: opacity .7s ease, visibility 0s linear .7s;
   z-index: 10;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(95, 124, 122, .7) transparent;
 }
+.overlay::-webkit-scrollbar { width: 6px; }
+.overlay::-webkit-scrollbar-thumb { background: rgba(95, 124, 122, .7); border-radius: 6px; }
 .card-open .overlay {
   opacity: 1;
   visibility: visible;
@@ -277,30 +282,25 @@ body {
 .closing .overlay { transition-duration: .35s, 0s; transition-delay: 0s, .35s; }
 
 .card {
+  --hang: 58px; /* how far the pinned photos stick out past the card's edge */
+  --pad: 40px;
   position: relative;
-  width: min(440px, 100%);
-  max-height: min(86vh, 780px);
-  max-height: min(86dvh, 780px);
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  display: flow-root;
+  margin: auto;
+  width: min(440px, calc(100% - 2 * var(--hang)));
   background: #f8f6f0;
   border: 1px solid rgba(90, 80, 70, .14);
   border-radius: 4px;
   box-shadow: 0 26px 70px rgba(70, 45, 70, .22), 0 2px 6px rgba(70, 45, 70, .08);
-  padding: 30px 40px 24px;
+  padding: 30px var(--pad) 24px;
   text-align: center;
   user-select: text;
   -webkit-user-select: text;
   transform: translateY(16px) scale(.985);
   transition: transform .8s cubic-bezier(.2, .8, .2, 1);
-  scrollbar-width: thin;
-  scrollbar-color: #5f7c7a transparent;
 }
 .card:focus { outline: none; }
 .card-open .card { transform: none; }
-.card::-webkit-scrollbar { width: 6px; }
-.card::-webkit-scrollbar-thumb { background: #5f7c7a; border-radius: 6px; }
 
 .card-rose {
   display: block;
@@ -314,6 +314,7 @@ body {
   margin-bottom: 14px;
 }
 .card-title {
+  text-wrap: balance;
   font: 500 clamp(26px, 4.6vw, 31px)/1.32 var(--serif);
   color: var(--plum-deep);
   margin-bottom: 22px;
@@ -324,6 +325,8 @@ body {
   color: #5a5056;
   margin-bottom: 14px;
 }
+/* start the closing lines below the right-hand photo, so they stay centred */
+.card-body p:last-child { clear: both; }
 .card-sign {
   text-wrap: balance;
   font: italic 500 17px/1.4 var(--serif);
@@ -342,71 +345,105 @@ body {
 }
 .link-btn:hover { color: var(--plum-deep); border-color: var(--plum); }
 
-/* ---------- Photos in the card ---------- */
-.photos {
-  width: min(270px, 82%);
-  margin: 0 auto 26px;
-}
-.photo-stack {
-  display: grid;
-  cursor: pointer;
-  touch-action: pan-y;
-  -webkit-user-select: none;
-  user-select: none;
-  outline: none;
-}
-.polaroid {
-  grid-area: 1 / 1;
+/* ---------- Photos pinned onto the card ---------- */
+.pin {
+  --w: 118px;
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: var(--w);
+  padding: 7px 7px 22px;
+  border: 0;
+  border-radius: 2px;
   background: #fff;
-  padding: 8px 8px 26px;
-  border-radius: 3px;
-  box-shadow: 0 10px 24px rgba(70, 45, 70, .16), 0 1px 3px rgba(70, 45, 70, .12);
-  transition: transform .65s cubic-bezier(.2, .8, .2, 1), opacity .45s ease;
+  box-shadow: 0 8px 20px rgba(70, 45, 70, .2), 0 1px 3px rgba(70, 45, 70, .14);
+  cursor: zoom-in;
+  opacity: 0;
+  transform: rotate(var(--r)) scale(1.15) translateY(-10px);
+  transition: opacity .5s ease var(--d), transform .7s cubic-bezier(.2, 1.3, .3, 1) var(--d), box-shadow .25s ease;
 }
-.polaroid img {
+.pin img {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 1px;
   background: #efe9e4;
   pointer-events: none;
   -webkit-user-drag: none;
 }
-.polaroid.p0 { z-index: 3; transform: rotate(-2.5deg); }
-.polaroid.p1 { z-index: 2; transform: translate(14px, 6px) rotate(5deg); }
-.polaroid.p2 { z-index: 1; transform: translate(-14px, 8px) rotate(-8deg); }
-.polaroid.out { z-index: 4; transform: translate(118%, -14px) rotate(16deg); opacity: 0; }
-.polaroid.out-l { z-index: 4; transform: translate(-118%, -14px) rotate(-16deg); opacity: 0; }
-.polaroid.from-l { z-index: 4; transform: translate(-118%, -14px) rotate(-16deg); opacity: 0; transition: none; }
-.photo-stack:focus-visible .p0 { outline: 2px solid rgba(107, 58, 99, .45); outline-offset: 3px; }
-
-.photo-dots {
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-  margin-top: 14px;
+/* a strip of washi tape holding each photo on */
+.pin::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 52px;
+  height: 17px;
+  transform: translateX(-50%) rotate(var(--tape-r));
+  background: repeating-linear-gradient(45deg, var(--tape) 0 6px, rgba(255, 255, 255, .45) 6px 9px);
+  box-shadow: 0 1px 2px rgba(60, 40, 50, .12);
 }
-.photo-dots button {
-  width: 20px;
-  height: 20px;
+.card-open .pin { opacity: 1; transform: rotate(var(--r)); }
+.card-open .pin:hover {
+  transform: rotate(0deg) scale(1.06);
+  box-shadow: 0 14px 28px rgba(70, 45, 70, .26), 0 2px 4px rgba(70, 45, 70, .14);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.pin:focus-visible { outline: 2px solid rgba(107, 58, 99, .45); outline-offset: 3px; }
+
+.pin-tr {
+  position: absolute;
+  top: -24px;
+  right: calc(-1 * var(--hang));
+  --r: 7deg; --d: .45s; --tape: rgba(244, 170, 190, .85); --tape-r: -4deg;
+}
+.pin-l {
+  float: left;
+  margin: 2px 12px 8px calc(-1 * (var(--pad) + var(--hang)));
+  --r: -6deg; --d: .65s; --tape: rgba(160, 210, 185, .85); --tape-r: 3deg;
+}
+.pin-r {
+  float: right;
+  margin: 4px calc(-1 * (var(--pad) + var(--hang))) 8px 12px;
+  --r: 5deg; --d: .85s; --tape: rgba(248, 194, 158, .85); --tape-r: -6deg;
+}
+
+/* tap a photo to see it large */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
   display: grid;
   place-items: center;
-  border: 0;
-  padding: 0;
-  background: none;
-  cursor: pointer;
+  padding: 20px;
+  background: rgba(45, 28, 45, .5);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .35s ease, visibility 0s linear .35s;
+  cursor: zoom-out;
 }
-.photo-dots button::after {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: rgba(107, 58, 99, .22);
-  transition: background .3s ease, transform .3s ease;
+.lightbox.open { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+.lightbox:focus { outline: none; }
+.lightbox-frame {
+  width: min(86vw, 76vh, 540px);
+  padding: 12px 12px 44px;
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 0 30px 80px rgba(30, 15, 30, .45);
+  transform: scale(.88) rotate(-4deg);
+  transition: transform .45s cubic-bezier(.2, 1.2, .3, 1);
 }
-.photo-dots button[aria-current="true"]::after { background: var(--plum); transform: scale(1.3); }
+.lightbox.open .lightbox-frame { transform: rotate(-1deg); }
+.lightbox img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
 
 .card-signature {
   font: 600 31px/1.2 'Dancing Script', var(--serif);
@@ -418,7 +455,14 @@ body {
 .card-signature .heart { font-size: .72em; vertical-align: .08em; }
 
 @media (max-width: 520px) {
-  .card { padding: 26px 24px 22px; }
+  .card { --hang: 30px; --pad: 24px; padding: 26px var(--pad) 22px; }
+  .pin { --w: 92px; padding: 5px 5px 16px; }
+  .pin::before { width: 40px; height: 14px; top: -7px; }
+  .pin-tr { top: -20px; }
+  .pin-l { margin-right: 6px; }
+  .card-title { font-size: 25px; }
+  /* keep the top-right photo clear of the music button */
+  .overlay { padding-top: 80px; }
   .card-body br { display: none; }
   .dedication { font-size: 13px; left: 16px; }
   .pill { font-size: 13px; padding: 10px 16px; }
