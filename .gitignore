@@ -2,3 +2,4 @@
 .claude/
 Thumbs.db
 .DS_Store
+/[0-9]*_[0-9]*_*.jpg

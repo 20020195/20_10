@@ -16,7 +16,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌹</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&family=Noto+Serif:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&family=Noto+Serif:ital,wght@0,400;0,500;1,400;1,500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -31,7 +31,7 @@
 
     <canvas id="garden"></canvas>
 
-    <p class="dedication">Dành cho em, cả một vườn thương.</p>
+    <p class="dedication">Dành cho Phạm Dung, cả một vườn thương.</p>
 
     <header class="intro" id="intro">
       <h2>Từ một bông hoa nhỏ...</h2>
@@ -72,8 +72,18 @@
         <path d="M12.2 16.6c3.4 4.6 12.2 4.6 15.6 0" fill="none" stroke="#d27792" stroke-width="1.1" stroke-linecap="round"/>
       </svg>
 
-      <p class="card-greet">Gửi em iu dấu,</p>
+      <p class="card-greet">Gửi Bé Kem iu dấu,</p>
       <h1 class="card-title" id="cardTitle">Mong những<br>điều đẹp đẽ<br>luôn nở bên em.</h1>
+
+      <!-- Ảnh: thêm/bớt ảnh bằng cách thêm/bớt một khối .polaroid (ảnh vuông trong thư mục photos/) -->
+      <div class="photos">
+        <div class="photo-stack" id="photoStack" role="button" tabindex="0" aria-label="Ảnh của em, chạm để xem ảnh tiếp theo">
+          <div class="polaroid"><img src="photos/1.jpg" alt="Em nhắm mắt mỉm cười giữa núi đồi" width="900" height="900" decoding="async"></div>
+          <div class="polaroid"><img src="photos/2.jpg" alt="Em ôm bó hoa trắng trên đỉnh núi" width="900" height="900" decoding="async"></div>
+          <div class="polaroid"><img src="photos/3.jpg" alt="Em giữa vườn hoa cánh bướm" width="900" height="900" decoding="async"></div>
+        </div>
+        <div class="photo-dots" id="photoDots"></div>
+      </div>
 
       <div class="card-body">
         <p>Có những ngày rất đỗi bình thường <br>bỗng hóa đặc biệt, chỉ vì có em ở đó.</p>
@@ -82,6 +92,7 @@
       </div>
 
       <p class="card-sign">Gửi em thật nhiều thương mến! Yêu em ♡</p>
+      <p class="card-signature">A Hi <span class="heart">❤️</span></p>
       <button class="link-btn" id="closeBtn" type="button">Ngắm vườn hoa</button>
     </article>
   </div>
