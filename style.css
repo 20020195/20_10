@@ -78,6 +78,7 @@ body {
   width: 100%;
   height: 100%;
   display: block;
+  touch-action: none;
 }
 
 /* ---------- Text ---------- */
@@ -89,6 +90,8 @@ body {
   color: #6e5f6b;
   opacity: 0;
   transition: opacity 1.2s ease .3s;
+  pointer-events: none;
+  max-width: calc(100% - 90px);
 }
 
 .intro {
@@ -193,6 +196,62 @@ body {
 .pill:active { transform: translateY(0) scale(.98); }
 .pill:focus-visible, .link-btn:focus-visible { outline: 2px solid rgba(107, 58, 99, .45); outline-offset: 2px; }
 
+/* ---------- Hint ---------- */
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: calc(max(6vh, calc(env(safe-area-inset-bottom) + 20px)) + 58px);
+  width: min(90vw, 520px);
+  transform: translate(-50%, 6px);
+  text-align: center;
+  font: italic 400 clamp(13.5px, 1.2vw, 16px)/1.5 var(--serif);
+  color: #574355;
+  text-shadow: 0 0 10px rgba(255, 255, 255, .95), 0 0 3px rgba(255, 255, 255, .9);
+  opacity: 0;
+  transition: opacity .8s ease, transform .8s ease;
+  pointer-events: none;
+  z-index: 4;
+}
+.show-hint .hint { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Music ---------- */
+.sound-btn {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(110, 90, 105, .16);
+  background: rgba(255, 255, 255, .8);
+  color: var(--plum);
+  box-shadow: 0 6px 18px rgba(80, 55, 80, .14);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  z-index: 12;
+  transition: transform .2s ease, background .2s ease;
+}
+.sound-btn[hidden] { display: none; }
+.sound-btn:hover { background: #fff; transform: scale(1.05); }
+.sound-btn:focus-visible { outline: 2px solid rgba(107, 58, 99, .45); outline-offset: 2px; }
+.sound-btn svg { width: 20px; height: 20px; }
+.sound-btn .slash { transition: opacity .3s ease; }
+.sound-btn.on .slash { opacity: 0; }
+.sound-btn.on svg { animation: bob 2.2s ease-in-out infinite; }
+.sound-btn.on::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(107, 58, 99, .35);
+  animation: ring 2.4s ease-out infinite;
+}
+@keyframes bob { 50% { transform: translateY(-1.5px) rotate(-5deg); } }
+@keyframes ring { from { transform: scale(1); opacity: .8; } to { transform: scale(1.6); opacity: 0; } }
+
 /* ---------- Card ---------- */
 .overlay {
   position: fixed;
@@ -290,5 +349,5 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cloud { animation: none; }
+  .cloud, .sound-btn.on svg, .sound-btn.on::after { animation: none; }
 }
